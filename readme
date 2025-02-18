@@ -1,0 +1,2 @@
+## run as
+inso run collection -w insomnia_sample.yaml wrk_scratc --disableCertValidation
