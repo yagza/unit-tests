@@ -1,0 +1,56 @@
+_type: export
+__export_format: 4
+__export_date: 2025-02-18T12:29:11.098Z
+__export_source: insomnia.desktop.app:v10.3.1
+resources:
+  - _id: req_fb25a1ced80d49b994251dbb76a5ad4c
+    parentId: wrk_scratchpad
+    modified: 1739881407149
+    created: 1739879443406
+    url: https://udemy.my.home/phpinfo.php
+    name: New Request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/10.3.1
+    authentication: {}
+    metaSortKey: -1739879443406
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_scratchpad
+    parentId: null
+    modified: 1739879303156
+    created: 1739879303156
+    name: Scratch Pad
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: env_99d30891da4bdcebc63947a8fc17f076de878684
+    parentId: wrk_scratchpad
+    modified: 1739879420347
+    created: 1739879420347
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1739879420347
+    environmentType: kv
+    _type: environment
+  - _id: jar_99d30891da4bdcebc63947a8fc17f076de878684
+    parentId: wrk_scratchpad
+    modified: 1739879420393
+    created: 1739879420393
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
