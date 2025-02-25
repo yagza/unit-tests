@@ -1,4 +1,5 @@
 # https://support.checkmarx.com/s/article/How-to-generate-a-new-CxSAST-scan-report-through-the-REST-API
+# https://docs.checkmarx.com/en/34965-46554-cxsast--odata--api-authentication.html
 
 import requests
 
