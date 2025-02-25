@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Конфигурация
+CHECKMARX_URL="https://<checkmarx-url>"
+USERNAME="<your-username>"
+PASSWORD="<your-password>"
+CLIENT_SECRET="<client-secret>"
+
+# Аутентификация
+echo "Аутентификация..."
+AUTH_RESPONSE=$(curl -s -X POST \
+  "${CHECKMARX_URL}/cxrestapi/auth/identity/connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=${USERNAME}" \
+  -d "password=${PASSWORD}" \
+  -d "grant_type=password" \
+  -d "scope=sast_rest_api" \
+  -d "client_id=resource_owner_client" \
+  -d "client_secret=${CLIENT_SECRET}")
+
+ACCESS_TOKEN=$(echo "${AUTH_RESPONSE}" | jq -r '.access_token')
+
+if [ -z "${ACCESS_TOKEN}" ]; then
+  echo "Ошибка аутентификации"
+  exit 1
+fi
+
+echo "Токен получен: ${ACCESS_TOKEN}"
+
+# Получение списка отчётов
+echo "Получение списка отчётов..."
+REPORTS_RESPONSE=$(curl -s -X GET \
+  "${CHECKMARX_URL}/cxrestapi/reports/sastScan" \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}")
+
+if [ -z "${REPORTS_RESPONSE}" ]; then
+  echo "Ошибка при получении списка отчётов"
+  exit 1
+fi
+
+# Обработка отчётов
+echo "Обработка отчётов..."
+echo "${REPORTS_RESPONSE}" | jq -c '.[]' | while read -r REPORT; do
+  REPORT_ID=$(echo "${REPORT}" | jq -r '.id')
+  REPORT_STATUS=$(echo "${REPORT}" | jq -r '.status.name')
+
+  if [ "${REPORT_STATUS}" == "Completed" ]; then
+    echo "Отчёт ${REPORT_ID} готов к выгрузке"
+
+    # Загрузка отчёта
+    DOWNLOAD_URL="${CHECKMARX_URL}/cxrestapi/reports/sastScan/${REPORT_ID}"
+    FILE_NAME="report_${REPORT_ID}.pdf"
+
+    echo "Загрузка отчёта ${REPORT_ID}..."
+    curl -s -X GET \
+      "${DOWNLOAD_URL}" \
+      -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+      --output "${FILE_NAME}"
+
+    if [ $? -eq 0 ]; then
+      echo "Отчёт ${REPORT_ID} сохранён как ${FILE_NAME}"
+    else
+      echo "Ошибка при загрузке отчёта ${REPORT_ID}"
+    fi
+  else
+    echo "Отчёт ${REPORT_ID} не готов (статус: ${REPORT_STATUS})"
+  fi
+done
+
+echo "Завершено."
